@@ -8,6 +8,7 @@ from halo import Halo
 import pickle
 import json
 import code
+import setup
 
 def has_needed_cookies(driver: WebDriver):
     return True if driver.get_cookie("kosogha") is not None else False
@@ -19,16 +20,22 @@ def recaptcha_ok(driver: WebDriver):
         return False
     return True
 
-def load_config():
+'''def load_config():
     with open("config.json", "r+") as config:
-        return json.load(config)
+        return json.load(config)'''
+
 
 def try_signin(driver: WebDriver):
     recaptcha_xpath = "//iframe[@title='reCAPTCHA']"
     recaptcha_frame = driver.find_element_by_xpath(recaptcha_xpath)
     recaptcha_wait_amount = 999
 
-    config = load_config()
+    config = setup.load_config()
+
+    '''if setup.first_run():
+        setup.set_account_details()
+    else:
+        pass'''
 
     account_email = config.get("email")
     account_password = config.get("password")
@@ -67,6 +74,12 @@ def try_signin(driver: WebDriver):
     return True
 
 def start_auto_absen():
+    
+    if setup.first_run():
+        setup.set_account_details()
+    else:
+        pass
+
     cookies_storage_filename = "cookies.pkl"
     cookies = None
 
