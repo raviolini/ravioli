@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from autoabsen import start_auto_absen
+import autoabsen
 
 from halo import Halo
 from pyfiglet import Figlet
@@ -50,4 +50,4 @@ if __name__ == '__main__':
     #stop_alien_invasion()
     #hide_homework_folder()
     if ask_auto_absen():
-        auto_absen()
+        autoabsen.start()

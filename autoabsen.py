@@ -9,6 +9,26 @@ import pickle
 import json
 import code
 
+from enum import Enum
+
+class WebDrivers(Enum):
+    FIREFOX = webdriver.Firefox
+    CHROME = webdriver.Chrome
+    EDGE = webdriver.Edge
+    IE = webdriver.Ie
+    SAFARI = webdriver.Safari
+    OPERA = webdriver.Opera
+
+def get_webdriver_class(webbrowser_name):
+    try:
+        return WebDrivers[webbrowser_name.upper()].value
+    except KeyError:
+        return None
+
+def load_config():
+    with open("config.json", "r+") as config:
+        return json.load(config)
+
 def has_needed_cookies(driver: WebDriver):
     return True if driver.get_cookie("kosogha") is not None else False
 
@@ -18,10 +38,6 @@ def recaptcha_ok(driver: WebDriver):
     if "false" in aria_checked_attrib:
         return False
     return True
-
-def load_config():
-    with open("config.json", "r+") as config:
-        return json.load(config)
 
 def try_signin(driver: WebDriver):
     recaptcha_xpath = "//iframe[@title='reCAPTCHA']"
@@ -66,7 +82,25 @@ def try_signin(driver: WebDriver):
     # TODO(zndf): Check if login is successful or not
     return True
 
-def start_auto_absen():
+def start():
+    config = load_config()
+
+    preferred_webbrowser_name = config.get("browser")
+
+    print("Preferred web browser identified as", preferred_webbrowser_name)
+
+    if preferred_webbrowser_name is None:
+        print("Preferred web browser is not set in config.json, defaulting to firefox (geckodriver)")
+        preferred_webbrowser_name = "firefox"
+
+    webdriver_class = get_webdriver_class(preferred_webbrowser_name)
+
+    if webdriver_class is None:
+        print("Web browser isn't recognized, defaulting to firefox (geckodriver)")
+        webdriver_class = webdriver.Firefox
+
+    assert webdriver_class is not None, "failed to set webdriver_class appropriately"
+
     cookies_storage_filename = "cookies.pkl"
     cookies = None
 
@@ -80,9 +114,9 @@ def start_auto_absen():
     except OSError:
         spinner.fail("Can't open cookies file. Will generate one later")
 
-    spinner.start("Starting firefox web browser")
-    driver = webdriver.Firefox()
-    spinner.succeed("Firefox webdriver started")
+    spinner.start("Starting web browser")
+    driver = webdriver_class()
+    spinner.succeed("Web browser started")
 
     spinner.start("Retrieving SIAKAD page")
     driver.get("https://siswa.smktelkom-mlg.sch.id/does_not_exist")
