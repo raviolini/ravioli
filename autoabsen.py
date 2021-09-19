@@ -1,4 +1,4 @@
-#!env python
+#! /usr/bin/env python
 from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.keys import Keys

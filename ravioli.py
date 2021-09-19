@@ -1,4 +1,4 @@
-#!env python
+#! /usr/bin/env python
 from autoabsen import start_auto_absen
 
 from halo import Halo
