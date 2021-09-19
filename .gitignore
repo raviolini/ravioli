@@ -1,0 +1,4 @@
+cookies.pkl
+config.json
+__pycache__
+geckodriver.log
