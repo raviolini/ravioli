@@ -2,3 +2,4 @@ halo==0.0.31
 requests==2.26.0
 pyfiglet==0.8.post1
 selenium==3.141.0
+webdriver-manager==3.4.2

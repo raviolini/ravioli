@@ -87,6 +87,7 @@ def start():
 
     if setup.first_run():
         setup.set_details()
+        setup.setup_webdriver()
     else:
         pass
 

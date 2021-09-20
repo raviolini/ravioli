@@ -1,5 +1,7 @@
 import json
-
+import subprocess
+import requests
+from selenium import webdriver
 from pathlib import Path
 
 # TODO(zndf): Fix wonky file I/O operations, they often fail because the file
@@ -67,12 +69,26 @@ def set_details():
 
     save_to_config(config)
 
+
+def setup_webdriver():
+    print("under construction")
+    browser = load_config().get('browser').lower()
+
+    if browser == "firefox":
+        from webdriver_manager.firefox import GeckoDriverManager
+        webdriver.Firefox(executable_path=GeckoDriverManager().install())
+    elif browser == "chrome":
+        from webdriver_manager.chrome import ChromeDriverManager
+        webdriver.Chrome(ChromeDriverManager().install())
+    elif browser == "edge":
+        from webdriver_manager.microsoft import EdgeChromiumDriverManager
+        webdriver.Edge(EdgeChromiumDriverManager().install())
+
 if __name__ == '__main__':
     if not first_run():
         print("This is not your first run, are you sure to reconfigure?")
         input("Press enter to continue or Ctrl+C to quit")
 
     Path("config.json").touch(exist_ok=True)
-    print(Path("config.json").touch(exist_ok=True))
 
     set_details()
