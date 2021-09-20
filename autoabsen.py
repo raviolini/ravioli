@@ -84,6 +84,12 @@ def try_signin(driver: WebDriver):
     return True
 
 def start():
+
+    if setup.first_run():
+        setup.set_details()
+    else:
+        pass
+
     config = load_config()
 
     preferred_webbrowser_name = config.get("browser")

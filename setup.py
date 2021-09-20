@@ -4,6 +4,19 @@ from pathlib import Path
 
 # TODO(zndf): Fix wonky file I/O operations, they often fail because the file
 #             have not yet been created or because the file content is empty
+#fixed (seto)
+def create_defaultConfig():
+    default_data ={
+        "first_run" : True,
+        "email" : "Email",
+        "password" : "Password",
+        "browser" : ""
+    }
+
+    json_object = json.dumps(default_data)
+
+    with open("config.json", "w") as file:
+        file.write(json_object)
 
 def load_config():
     with open("config.json", "r") as config_file:
@@ -22,10 +35,14 @@ def first_run():
     try:
         first_run = load_config().get("first_run")
     except FileNotFoundError:
+        print("no config file found, creating default config file")
+        create_defaultConfig()
+        print("default config created")
         first_run = True
 
     if first_run is True or first_run is None:
         return True
+
     return False
 
 def get_details():
@@ -55,5 +72,6 @@ if __name__ == '__main__':
         input("Press enter to continue or Ctrl+C to quit")
 
     Path("config.json").touch(exist_ok=True)
+    print(Path("config.json").touch(exist_ok=True))
 
     set_details()
