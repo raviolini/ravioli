@@ -35,9 +35,6 @@ def hide_homework_folder():
     time.sleep(2.4)
     spinner.succeed()
 
-def auto_absen():
-    start_auto_absen()
-
 def ask_auto_absen():
     return yn_choice("Start 'auto-absen' sequence")
 
