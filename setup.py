@@ -5,6 +5,7 @@ from pathlib import Path
 # TODO(zndf): Fix wonky file I/O operations, they often fail because the file
 #             have not yet been created or because the file content is empty
 #fixed (seto)
+
 def create_defaultConfig():
     default_data ={
         "first_run" : True,
