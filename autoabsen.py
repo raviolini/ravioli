@@ -8,6 +8,7 @@ from halo import Halo
 import pickle
 import json
 import code
+import setup
 
 from enum import Enum
 
@@ -44,7 +45,7 @@ def try_signin(driver: WebDriver):
     recaptcha_frame = driver.find_element_by_xpath(recaptcha_xpath)
     recaptcha_wait_amount = 999
 
-    config = load_config()
+    config = setup.load_config()
 
     account_email = config.get("email")
     account_password = config.get("password")
