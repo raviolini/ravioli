@@ -4,6 +4,8 @@ import requests
 from selenium import webdriver
 from pathlib import Path
 from halo import Halo
+import colorama
+from colorama import Fore
 # TODO(zndf): Fix wonky file I/O operations, they often fail because the file
 #             have not yet been created or because the file content is empty
 #fixed (seto)
@@ -35,7 +37,7 @@ def save_to_config(config):
         json.dump(config, config_file)
 
 def message_info(message):
-    Message = "[INFO] : {_message}".format(_message=message)
+    Message = Fore.YELLOW + "[INFO] : {_message}".format(_message=message)
     print(Message)
 
 def first_run():
