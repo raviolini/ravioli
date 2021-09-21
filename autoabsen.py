@@ -55,11 +55,11 @@ def try_signin(driver: WebDriver):
     account_password = config.get("password")
 
     if config.get("email") is None:
-        print("Can't load email from config.json")
+        log_neko.message_W("Can't load email from config.json")
         return False
 
     if config.get("password") is None:
-        print("Can't load password from config.json")
+        log_neko.message_W("Can't load password from config.json")
         return False
 
     email_input_element = driver.find_element_by_name("email")
@@ -75,9 +75,9 @@ def try_signin(driver: WebDriver):
     driver.switch_to.frame(recaptcha_frame)
     recaptcha_status = WebDriverWait(driver, recaptcha_wait_amount).until(recaptcha_ok)
     if recaptcha_status is True:
-        print("ReCAPTCHA is identified as checked, signing in...")
+        log_neko.message_info("ReCAPTCHA is identified as checked, signing in...")
     else:
-        print("Failed to login, please check out the presence form yourself")
+        log_neko.message_W("Failed to login, please check out the presence form yourself")
         driver.switch_to.parent_frame()
         return False
 
@@ -158,6 +158,7 @@ def start():
 
     if not signed_in:
         log_neko.message_info("Sign in needed. Attempting sign in")
+        log_neko.message_info("Please check the captcha box for me")
         signed_in = try_signin(driver)
 
     if not signed_in:

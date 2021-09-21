@@ -77,7 +77,7 @@ def set_details():
 
     save_to_config(config)
 
-@Halo(text=Fore.YELLOW + "[INFO] Downloading & installing webdriver : ", spinner="dots")
+#@Halo(text=Fore.YELLOW + "[INFO] Downloading & installing webdriver :  ", spinner="dots")
 def setup_webdriver():
     log_neko.message_W("this feature is under construction")
     browser = load_config().get('browser').lower()
