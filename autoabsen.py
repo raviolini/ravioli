@@ -97,13 +97,13 @@ def start():
     print("Preferred web browser identified as", preferred_webbrowser_name)
 
     if preferred_webbrowser_name is None:
-        print("Preferred web browser is not set in config.json, defaulting to firefox (geckodriver)")
+        setup.message_info("Preferred web browser is not set in config.json, defaulting to firefox (geckodriver)")
         preferred_webbrowser_name = "firefox"
 
     webdriver_class = get_webdriver_class(preferred_webbrowser_name)
 
     if webdriver_class is None:
-        print("Web browser isn't recognized, defaulting to firefox (geckodriver)")
+        setup.message_info("Web browser isn't recognized, defaulting to firefox (geckodriver)")
         webdriver_class = webdriver.Firefox
 
     assert webdriver_class is not None, "failed to set webdriver_class appropriately"
@@ -120,9 +120,15 @@ def start():
         spinner.succeed("Previous cookies successfully loaded")
     except OSError:
         spinner.fail("Can't open cookies file. Will generate one later")
-
+    
     spinner.start("Starting web browser")
-    driver = webdriver_class()
+    try:
+        driver = webdriver_class()
+    except:
+        spinner.fail("Driver not found")
+        setup.message_info("Initializing driver setup")
+        setup.setup_webdriver()
+
     spinner.succeed("Web browser started")
 
     spinner.start("Retrieving SIAKAD page")
