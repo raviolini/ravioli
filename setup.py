@@ -1,16 +1,13 @@
 import json
-import subprocess
-import requests
 from selenium import webdriver
 from pathlib import Path
 from halo import Halo
-import colorama
 from colorama import Fore
 # TODO(zndf): Fix wonky file I/O operations, they often fail because the file
 #             have not yet been created or because the file content is empty
 #fixed (seto)
 
-#@Halo(text="Creating default config file", spinner="dots")
+
 def create_defaultConfig():
     default_data ={
         "first_run" : True,
@@ -81,12 +78,10 @@ def set_details():
 
     save_to_config(config)
 
-
+@Halo(text=Fore.YELLOW + "[INFO] Downloading & installing webdriver ", spinner="dots")
 def setup_webdriver():
     message_info("this feature is under construction")
     browser = load_config().get('browser').lower()
-
-    #driver = ""
 
     if browser == "firefox":
         from webdriver_manager.firefox import GeckoDriverManager
@@ -101,7 +96,6 @@ def setup_webdriver():
         #driver = 
         webdriver.Edge(EdgeChromiumDriverManager().install())
 
-    #return driver
 
 if __name__ == '__main__':
     if not first_run():

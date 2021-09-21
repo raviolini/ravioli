@@ -7,7 +7,6 @@ from selenium.webdriver.remote.webelement import WebElement
 from halo import Halo
 import pickle
 import json
-import code
 import setup
 
 from enum import Enum
