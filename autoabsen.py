@@ -8,6 +8,7 @@ from halo import Halo
 import pickle
 import json
 import setup
+import log_neko
 
 from enum import Enum
 
@@ -98,16 +99,16 @@ def start():
 
     preferred_webbrowser_name = config.get("browser")
 
-    print("Preferred web browser identified as", preferred_webbrowser_name)
+    log_neko.message_info("Preferred web browser identified as", preferred_webbrowser_name)
 
     if preferred_webbrowser_name is None:
-        setup.message_info("Preferred web browser is not set in config.json, defaulting to firefox (geckodriver)")
+        log_neko.message_W("Preferred web browser is not set in config.json, defaulting to firefox (geckodriver)")
         preferred_webbrowser_name = "firefox"
 
     webdriver_class = get_webdriver_class(preferred_webbrowser_name)
 
     if webdriver_class is None:
-        setup.message_info("Web browser isn't recognized, defaulting to firefox (geckodriver)")
+        log_neko.message_W("Web browser isn't recognized, defaulting to firefox (geckodriver)")
         webdriver_class = webdriver.Firefox
 
     assert webdriver_class is not None, "failed to set webdriver_class appropriately"
@@ -130,7 +131,7 @@ def start():
         driver = webdriver_class()
     except:
         spinner.fail("Driver not found")
-        setup.message_info("Initializing driver setup")
+        log_neko.message_info("Initializing driver setup")
         driver = setup.setup_webdriver()
 
     spinner.succeed("Web browser started")
@@ -156,11 +157,11 @@ def start():
     signed_in = "Login" not in driver.title
 
     if not signed_in:
-        print("Sign in needed. Attempting sign in")
+        log_neko.message_info("Sign in needed. Attempting sign in")
         signed_in = try_signin(driver)
 
     if not signed_in:
-        print("Sign in attempt failed. Aborting")
+        log_neko.message_W("Sign in attempt failed. Aborting")
         return False
 
     WebDriverWait(driver, 60).until(has_needed_cookies, "Needed cookies can't be found")

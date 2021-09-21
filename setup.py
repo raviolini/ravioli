@@ -1,8 +1,10 @@
 import json
+from os import system
 from selenium import webdriver
 from pathlib import Path
 from halo import Halo
 from colorama import Fore
+import log_neko
 # TODO(zndf): Fix wonky file I/O operations, they often fail because the file
 #             have not yet been created or because the file content is empty
 #fixed (seto)
@@ -33,22 +35,19 @@ def save_to_config(config):
     with open("config.json", "w") as config_file:
         json.dump(config, config_file)
 
-def message_info(message):
-    Message = Fore.YELLOW + "[INFO] : {_message}".format(_message=message)
-    print(Message)
 
 def first_run():
     try:
         first_run = load_config().get("first_run")
     except FileNotFoundError:
-        message_info("no config file found")
+        log_neko.message_info("no config file found")
 
-        create_file_info = Halo(text = "Creating default config file", spinner='dots')
-        create_file_info.start()
+        create_file_info = Halo(spinner='dots')
+        create_file_info.start("Creating default config file", )
 
         create_defaultConfig()
         
-        create_file_info.succeed()
+        create_file_info.succeed("Default config file created")
 
         first_run = True
 
@@ -80,7 +79,7 @@ def set_details():
 
 @Halo(text=Fore.YELLOW + "[INFO] Downloading & installing webdriver : ", spinner="dots")
 def setup_webdriver():
-    message_info("this feature is under construction")
+    log_neko.message_W("this feature is under construction")
     browser = load_config().get('browser').lower()
     driver = ""
     if browser == "firefox":
@@ -98,8 +97,11 @@ def setup_webdriver():
 
 if __name__ == '__main__':
     if not first_run():
-        message_info("This is not your first run, are you sure to reconfigure?")
-        input("Press enter to continue or Ctrl+C to quit ")
+        log_neko.message_W("This is not your first run, are you sure to reconfigure?")
+        try:
+            input("Press enter to continue or Ctrl+C to quit ")
+        except KeyboardInterrupt:
+            exit(log_neko.message_info("exiting"))
 
     Path("config.json").touch(exist_ok=True)
 
