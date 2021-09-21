@@ -30,7 +30,11 @@ def load_config():
         return json.load(config)
 
 def has_needed_cookies(driver: WebDriver):
-    return True if driver.get_cookie("kosogha") is not None else False
+    kosogha_cookie_exist = driver.get_cookie("kosogha") is not None
+    ci_session_cookie_exist = driver.get_cookie("ci_session") is not None
+    cookie_cookie_exist = driver.get_cookie("cookie") is not None
+
+    return True if kosogha_cookie_exist and ci_session_cookie_exist and cookie_cookie_exist else False
 
 def recaptcha_ok(driver: WebDriver):
     recaptcha_anchor = driver.find_element_by_id("recaptcha-anchor")
@@ -120,14 +124,14 @@ def start():
         spinner.succeed("Previous cookies successfully loaded")
     except OSError:
         spinner.fail("Can't open cookies file. Will generate one later")
-    
+
     spinner.start("Starting web browser")
     try:
         driver = webdriver_class()
     except:
         spinner.fail("Driver not found")
         setup.message_info("Initializing driver setup")
-        setup.setup_webdriver()
+        driver = setup.setup_webdriver()
 
     spinner.succeed("Web browser started")
 

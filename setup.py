@@ -86,15 +86,15 @@ def setup_webdriver():
     if browser == "firefox":
         from webdriver_manager.firefox import GeckoDriverManager
         #driver = 
-        webdriver.Firefox(executable_path=GeckoDriverManager().install())
+        return webdriver.Firefox(executable_path=GeckoDriverManager().install())
     elif browser == "chrome":
         from webdriver_manager.chrome import ChromeDriverManager
         #driver = 
-        webdriver.Chrome(ChromeDriverManager().install())
+        return webdriver.Chrome(ChromeDriverManager().install())
     elif browser == "edge":
         from webdriver_manager.microsoft import EdgeChromiumDriverManager
         #driver = 
-        webdriver.Edge(EdgeChromiumDriverManager().install())
+        return webdriver.Edge(EdgeChromiumDriverManager().install())
 
 
 if __name__ == '__main__':
