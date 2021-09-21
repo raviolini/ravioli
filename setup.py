@@ -3,19 +3,19 @@ import subprocess
 import requests
 from selenium import webdriver
 from pathlib import Path
-
+from halo import Halo
 # TODO(zndf): Fix wonky file I/O operations, they often fail because the file
 #             have not yet been created or because the file content is empty
 #fixed (seto)
 
+#@Halo(text="Creating default config file", spinner="dots")
 def create_defaultConfig():
     default_data ={
         "first_run" : True,
         "email" : "Email",
         "password" : "Password",
         "browser" : ""
-    }
-
+        }    
     json_object = json.dumps(default_data)
 
     with open("config.json", "w") as file:
@@ -34,13 +34,21 @@ def save_to_config(config):
     with open("config.json", "w") as config_file:
         json.dump(config, config_file)
 
+def message_info(message):
+    Message = "[INFO] : {_message}".format(_message=message)
+    print(Message)
+
 def first_run():
     try:
         first_run = load_config().get("first_run")
     except FileNotFoundError:
-        print("no config file found, creating default config file")
+        message_info("no config file found")
+
+        create_file_info = Halo(text = "Creating default config file", spinner='dots')
+        create_file_info.start()
         create_defaultConfig()
-        print("default config created")
+        create_file_info.succeed()
+
         first_run = True
 
     if first_run is True or first_run is None:
