@@ -74,15 +74,22 @@ def setup_webdriver():
     print("under construction")
     browser = load_config().get('browser').lower()
 
+    #driver = ""
+
     if browser == "firefox":
         from webdriver_manager.firefox import GeckoDriverManager
+        #driver = 
         webdriver.Firefox(executable_path=GeckoDriverManager().install())
     elif browser == "chrome":
         from webdriver_manager.chrome import ChromeDriverManager
+        #driver = 
         webdriver.Chrome(ChromeDriverManager().install())
     elif browser == "edge":
         from webdriver_manager.microsoft import EdgeChromiumDriverManager
+        #driver = 
         webdriver.Edge(EdgeChromiumDriverManager().install())
+
+    #return driver
 
 if __name__ == '__main__':
     if not first_run():
