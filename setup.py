@@ -46,7 +46,9 @@ def first_run():
 
         create_file_info = Halo(text = "Creating default config file", spinner='dots')
         create_file_info.start()
+
         create_defaultConfig()
+        
         create_file_info.succeed()
 
         first_run = True
@@ -79,7 +81,7 @@ def set_details():
 
 
 def setup_webdriver():
-    print("under construction")
+    message_info("this feature is under construction")
     browser = load_config().get('browser').lower()
 
     #driver = ""
@@ -101,8 +103,8 @@ def setup_webdriver():
 
 if __name__ == '__main__':
     if not first_run():
-        print("This is not your first run, are you sure to reconfigure?")
-        input("Press enter to continue or Ctrl+C to quit")
+        message_info("This is not your first run, are you sure to reconfigure?")
+        input("Press enter to continue or Ctrl+C to quit ")
 
     Path("config.json").touch(exist_ok=True)
 
