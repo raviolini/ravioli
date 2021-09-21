@@ -78,23 +78,22 @@ def set_details():
 
     save_to_config(config)
 
-@Halo(text=Fore.YELLOW + "[INFO] Downloading & installing webdriver \n", spinner="dots")
+@Halo(text=Fore.YELLOW + "[INFO] Downloading & installing webdriver : ", spinner="dots")
 def setup_webdriver():
     message_info("this feature is under construction")
     browser = load_config().get('browser').lower()
-
+    driver = ""
     if browser == "firefox":
         from webdriver_manager.firefox import GeckoDriverManager
-        #driver = 
-        return webdriver.Firefox(executable_path=GeckoDriverManager().install())
+        driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
     elif browser == "chrome":
         from webdriver_manager.chrome import ChromeDriverManager
-        #driver = 
-        return webdriver.Chrome(ChromeDriverManager().install())
+        driver = webdriver.Chrome(ChromeDriverManager().install())
     elif browser == "edge":
         from webdriver_manager.microsoft import EdgeChromiumDriverManager
-        #driver = 
-        return webdriver.Edge(EdgeChromiumDriverManager().install())
+        driver = webdriver.Edge(EdgeChromiumDriverManager().install())
+
+    return driver
 
 
 if __name__ == '__main__':
