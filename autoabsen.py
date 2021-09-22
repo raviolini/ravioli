@@ -1,5 +1,7 @@
 #! /usr/bin/env python
+from logging import exception
 from selenium import webdriver
+import selenium
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
@@ -133,40 +135,48 @@ def start():
         spinner.info("Trying to find webdriver")
         log_neko.message_info("Initializing driver setup")
         driver = setup.setup_webdriver()
-
-    spinner.succeed("Web browser started")
-
-    spinner.start("Retrieving SIAKAD page")
-    driver.get("https://siswa.smktelkom-mlg.sch.id/does_not_exist")
-    spinner.succeed("SIAKAD successfully retrieved")
-
-    # Remove presetted login cookies incase the does_not_exist
-    # page inserts new cookies that will intervere with the old ones
-    driver.delete_all_cookies()
-
-    if cookies is not None:
-        spinner.start("Loading cookies into web browser")
-        for cookie in cookies:
-            driver.add_cookie(cookie)
-        spinner.succeed("Cookies loaded into web browser")
-
-    spinner.start("Reloading SIAKAD page")
-    driver.get("https://siswa.smktelkom-mlg.sch.id/")
-    spinner.succeed("SIAKAD successfully reloaded")
     
-    signed_in = "Login" not in driver.title
+    try:
+        spinner.succeed("Web browser started")
+        
+        log_neko.message_info("Please don't close poped up browser")
 
-    if not signed_in:
-        log_neko.message_info("Sign in needed. Attempting sign in")
-        log_neko.message_info("Please check the captcha box for me")
-        signed_in = try_signin(driver)
-
-    if not signed_in:
-        log_neko.message_W("Sign in attempt failed. Aborting")
-        return False
-
-    WebDriverWait(driver, 60).until(has_needed_cookies, "Needed cookies can't be found")
-    with open("cookies.pkl", "wb") as cookie_storage:
-        pickle.dump(driver.get_cookies(), cookie_storage)
+        spinner.start("Retrieving SIAKAD page")
+        driver.get("https://siswa.smktelkom-mlg.sch.id/does_not_exist")
+        spinner.succeed("SIAKAD successfully retrieved")
+        
+        # Remove presetted login cookies incase the does_not_exist
+        # # page inserts new cookies that will intervere with the old ones
+        driver.delete_all_cookies()
+        
+        if cookies is not None:
+            spinner.start("Loading cookies into web browser")
+            for cookie in cookies:
+                driver.add_cookie(cookie)
+            spinner.succeed("Cookies loaded into web browser")
+        
+        spinner.start("Reloading SIAKAD page")
+        driver.get("https://siswa.smktelkom-mlg.sch.id/")
+        spinner.succeed("SIAKAD successfully reloaded")
+        
+        signed_in = "Login" not in driver.title
+        
+        if not signed_in:
+            log_neko.message_info("Sign in needed. Attempting sign in")
+            log_neko.message_info("Please check the captcha box for me")
+            signed_in = try_signin(driver)
+        
+        if not signed_in:
+            log_neko.message_W("Sign in attempt failed. Aborting")
+            return False
+        
+        WebDriverWait(driver, 60).until(has_needed_cookies, "Needed cookies can't be found")
+        
+        with open("cookies.pkl", "wb") as cookie_storage:
+            pickle.dump(driver.get_cookies(), cookie_storage)
+        
+        log_neko.message_info("Cleaning up...")
+    except:
+        log_neko.message_W("Could not find webpage or target window already closed")
 
     return True

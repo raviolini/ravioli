@@ -74,12 +74,11 @@ def set_details():
 
     save_to_config(config)
 
-@Halo(text=log_neko.compose_info("Getting webdriver..."), spinner="dots")
+@Halo(text=log_neko.compose_info("Getting webdriver..."), spinner="unicorn")
 def setup_webdriver():
     os.environ['WDM_PRINT_FIRST_LINE'] = 'False' #remove the space from log
     os.environ['WDM_LOG_LEVEL'] = '0' #silent the webdriver_manager log
 
-    log_neko.message_W("this feature is under construction")
     browser = load_config().get('browser').lower()
     driver = ""
     if browser == "firefox":
@@ -92,7 +91,7 @@ def setup_webdriver():
         from webdriver_manager.microsoft import EdgeChromiumDriverManager
         driver = webdriver.Edge(EdgeChromiumDriverManager().install())
     return driver
-
+    
 
 if __name__ == '__main__':
     if not first_run():
