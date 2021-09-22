@@ -1,13 +1,10 @@
 import json
-from os import system
+import os
 from selenium import webdriver
 from pathlib import Path
 from halo import Halo
 from colorama import Fore
 import log_neko
-# TODO(zndf): Fix wonky file I/O operations, they often fail because the file
-#             have not yet been created or because the file content is empty
-#fixed (seto)
 
 
 def create_defaultConfig():
@@ -53,7 +50,7 @@ def first_run():
 
     if first_run is True or first_run is None:
         return True
-
+    
     return False
 
 def get_details():
@@ -77,8 +74,11 @@ def set_details():
 
     save_to_config(config)
 
-#@Halo(text=Fore.YELLOW + "[INFO] Downloading & installing webdriver :  ", spinner="dots")
+@Halo(text=log_neko.compose_info("Getting webdriver..."), spinner="dots")
 def setup_webdriver():
+    os.environ['WDM_PRINT_FIRST_LINE'] = 'False' #remove the space from log
+    os.environ['WDM_LOG_LEVEL'] = '0' #silent the webdriver_manager log
+
     log_neko.message_W("this feature is under construction")
     browser = load_config().get('browser').lower()
     driver = ""
@@ -91,7 +91,6 @@ def setup_webdriver():
     elif browser == "edge":
         from webdriver_manager.microsoft import EdgeChromiumDriverManager
         driver = webdriver.Edge(EdgeChromiumDriverManager().install())
-
     return driver
 
 
@@ -101,7 +100,7 @@ if __name__ == '__main__':
         try:
             input("Press enter to continue or Ctrl+C to quit ")
         except KeyboardInterrupt:
-            exit(log_neko.message_info("exiting"))
+            exit(log_neko.message_info("Exiting"))
 
     Path("config.json").touch(exist_ok=True)
 

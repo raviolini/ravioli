@@ -1,5 +1,6 @@
 from colorama import Fore
 
+#message automatic print message
 def message_info(message, second_arg = " "):
     Message = Fore.GREEN + "[INFO] : {_message} {_second_arg}".format(_message=message, _second_arg=second_arg)
     print(Message)
@@ -7,6 +8,15 @@ def message_info(message, second_arg = " "):
 def message_W(message, second_arg = " "):
     Message = Fore.YELLOW + "[WARNING] : {_message} {_second_arg}".format(_message=message, _second_arg=second_arg)
     print(Message)
+
+#compose return composed string
+def compose_info(message, second_arg = " "):
+    Message = Fore.GREEN + "[INFO] : {_message} {_second_arg}".format(_message=message, _second_arg=second_arg)
+    return Message
+
+def compose_W(message, second_arg = " "):
+    Message = Fore.YELLOW + "[WARNING] : {_message} {_second_arg}".format(_message=message, _second_arg=second_arg)
+    return Message
 
 def test():
     message_info("testing the message function")

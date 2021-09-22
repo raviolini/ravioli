@@ -130,7 +130,7 @@ def start():
     try:
         driver = webdriver_class()
     except:
-        spinner.fail("Driver not found")
+        spinner.info("Trying to find webdriver")
         log_neko.message_info("Initializing driver setup")
         driver = setup.setup_webdriver()
 
@@ -153,7 +153,7 @@ def start():
     spinner.start("Reloading SIAKAD page")
     driver.get("https://siswa.smktelkom-mlg.sch.id/")
     spinner.succeed("SIAKAD successfully reloaded")
-
+    
     signed_in = "Login" not in driver.title
 
     if not signed_in:
