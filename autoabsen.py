@@ -1,7 +1,5 @@
 #! /usr/bin/env python
-from logging import exception
 from selenium import webdriver
-import selenium
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
@@ -129,6 +127,8 @@ def start():
         spinner.fail("Can't open cookies file. Will generate one later")
 
     spinner.start("Starting web browser")
+
+    #get the webdriver
     try:
         driver = webdriver_class()
     except:
@@ -136,6 +136,7 @@ def start():
         log_neko.message_info("Initializing driver setup")
         driver = setup.setup_webdriver()
     
+    #opening browser & trying to sign in
     try:
         spinner.succeed("Web browser started")
         
