@@ -2,7 +2,7 @@
 import autoabsen
 
 from halo import Halo
-from pyfiglet import Figlet
+from art import tprint
 
 from os import system
 import time
@@ -14,8 +14,7 @@ def yn_choice(message, default='y'):
     return choice.strip().lower() in values
 
 def say_welcome():
-    figlet = Figlet(font='slant')
-    print(figlet.renderText('RAVIOLI'))
+    tprint("{*} RAVIOLI")
 
 def download_ram():
     spinner = Halo(text='Downloading RAM', spinner='dots')
