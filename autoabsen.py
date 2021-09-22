@@ -8,6 +8,7 @@ from halo import Halo
 import pickle
 import json
 import setup
+import log_neko
 
 from enum import Enum
 
@@ -54,11 +55,11 @@ def try_signin(driver: WebDriver):
     account_password = config.get("password")
 
     if config.get("email") is None:
-        print("Can't load email from config.json")
+        log_neko.message_W("Can't load email from config.json")
         return False
 
     if config.get("password") is None:
-        print("Can't load password from config.json")
+        log_neko.message_W("Can't load password from config.json")
         return False
 
     email_input_element = driver.find_element_by_name("email")
@@ -74,9 +75,9 @@ def try_signin(driver: WebDriver):
     driver.switch_to.frame(recaptcha_frame)
     recaptcha_status = WebDriverWait(driver, recaptcha_wait_amount).until(recaptcha_ok)
     if recaptcha_status is True:
-        print("ReCAPTCHA is identified as checked, signing in...")
+        log_neko.message_info("ReCAPTCHA is identified as checked, signing in...")
     else:
-        print("Failed to login, please check out the presence form yourself")
+        log_neko.message_W("Failed to login, please check out the presence form yourself")
         driver.switch_to.parent_frame()
         return False
 
@@ -98,16 +99,16 @@ def start():
 
     preferred_webbrowser_name = config.get("browser")
 
-    print("Preferred web browser identified as", preferred_webbrowser_name)
+    log_neko.message_info("Preferred web browser identified as", preferred_webbrowser_name)
 
     if preferred_webbrowser_name is None:
-        setup.message_info("Preferred web browser is not set in config.json, defaulting to firefox (geckodriver)")
+        log_neko.message_W("Preferred web browser is not set in config.json, defaulting to firefox (geckodriver)")
         preferred_webbrowser_name = "firefox"
 
     webdriver_class = get_webdriver_class(preferred_webbrowser_name)
 
     if webdriver_class is None:
-        setup.message_info("Web browser isn't recognized, defaulting to firefox (geckodriver)")
+        log_neko.message_W("Web browser isn't recognized, defaulting to firefox (geckodriver)")
         webdriver_class = webdriver.Firefox
 
     assert webdriver_class is not None, "failed to set webdriver_class appropriately"
@@ -129,8 +130,8 @@ def start():
     try:
         driver = webdriver_class()
     except:
-        spinner.fail("Driver not found")
-        setup.message_info("Initializing driver setup")
+        spinner.info("Trying to find webdriver")
+        log_neko.message_info("Initializing driver setup")
         driver = setup.setup_webdriver()
 
     spinner.succeed("Web browser started")
@@ -152,15 +153,16 @@ def start():
     spinner.start("Reloading SIAKAD page")
     driver.get("https://siswa.smktelkom-mlg.sch.id/")
     spinner.succeed("SIAKAD successfully reloaded")
-
+    
     signed_in = "Login" not in driver.title
 
     if not signed_in:
-        print("Sign in needed. Attempting sign in")
+        log_neko.message_info("Sign in needed. Attempting sign in")
+        log_neko.message_info("Please check the captcha box for me")
         signed_in = try_signin(driver)
 
     if not signed_in:
-        print("Sign in attempt failed. Aborting")
+        log_neko.message_W("Sign in attempt failed. Aborting")
         return False
 
     WebDriverWait(driver, 60).until(has_needed_cookies, "Needed cookies can't be found")

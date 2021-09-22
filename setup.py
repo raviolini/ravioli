@@ -1,11 +1,10 @@
 import json
+import os
 from selenium import webdriver
 from pathlib import Path
 from halo import Halo
 from colorama import Fore
-# TODO(zndf): Fix wonky file I/O operations, they often fail because the file
-#             have not yet been created or because the file content is empty
-#fixed (seto)
+import log_neko
 
 
 def create_defaultConfig():
@@ -33,28 +32,25 @@ def save_to_config(config):
     with open("config.json", "w") as config_file:
         json.dump(config, config_file)
 
-def message_info(message):
-    Message = Fore.YELLOW + "[INFO] : {_message}".format(_message=message)
-    print(Message)
 
 def first_run():
     try:
         first_run = load_config().get("first_run")
     except FileNotFoundError:
-        message_info("no config file found")
+        log_neko.message_info("no config file found")
 
-        create_file_info = Halo(text = "Creating default config file", spinner='dots')
-        create_file_info.start()
+        create_file_info = Halo(spinner='dots')
+        create_file_info.start("Creating default config file", )
 
         create_defaultConfig()
         
-        create_file_info.succeed()
+        create_file_info.succeed("Default config file created")
 
         first_run = True
 
     if first_run is True or first_run is None:
         return True
-
+    
     return False
 
 def get_details():
@@ -78,9 +74,12 @@ def set_details():
 
     save_to_config(config)
 
-@Halo(text=Fore.YELLOW + "[INFO] Downloading & installing webdriver : ", spinner="dots")
+@Halo(text=log_neko.compose_info("Getting webdriver..."), spinner="dots")
 def setup_webdriver():
-    message_info("this feature is under construction")
+    os.environ['WDM_PRINT_FIRST_LINE'] = 'False' #remove the space from log
+    os.environ['WDM_LOG_LEVEL'] = '0' #silent the webdriver_manager log
+
+    log_neko.message_W("this feature is under construction")
     browser = load_config().get('browser').lower()
     driver = ""
     if browser == "firefox":
@@ -92,14 +91,16 @@ def setup_webdriver():
     elif browser == "edge":
         from webdriver_manager.microsoft import EdgeChromiumDriverManager
         driver = webdriver.Edge(EdgeChromiumDriverManager().install())
-
     return driver
 
 
 if __name__ == '__main__':
     if not first_run():
-        message_info("This is not your first run, are you sure to reconfigure?")
-        input("Press enter to continue or Ctrl+C to quit ")
+        log_neko.message_W("This is not your first run, are you sure to reconfigure?")
+        try:
+            input("Press enter to continue or Ctrl+C to quit ")
+        except KeyboardInterrupt:
+            exit(log_neko.message_info("Exiting"))
 
     Path("config.json").touch(exist_ok=True)
 
