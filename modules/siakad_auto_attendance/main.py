@@ -1,30 +1,35 @@
+"""
+    Automatically fill attendance list on SIAKAD
+"""
+
+import os
+
+from selenium import webdriver
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.support.wait import WebDriverWait
+from halo import Halo
+
+from webdriver_manager.firefox import GeckoDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
+
 from . import log_neko
 from . import utils
 from . import configure
 
-from selenium import webdriver
-from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.remote.webelement import WebElement
-from halo import Halo
-
-from enum import Enum
-import pickle
-import json
-import os
 
 def get_webdriver(browser_name: str):
+    """
+        Instantiate respective webdriver specified in browser_name
+    """
+
     os.environ['WDM_LOG_LEVEL'] = '0' # Silence the webdriver_manager log
 
     if browser_name == "firefox":
-        from webdriver_manager.firefox import GeckoDriverManager
         driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
     elif browser_name == "chrome":
-        from webdriver_manager.chrome import ChromeDriverManager
         driver = webdriver.Chrome(ChromeDriverManager().install())
     elif browser_name == "edge":
-        from webdriver_manager.microsoft import EdgeChromiumDriverManager
         driver = webdriver.Edge(EdgeChromiumDriverManager().install())
     else:
         raise RuntimeError("Web browser isn't recognized or supported")
@@ -32,6 +37,10 @@ def get_webdriver(browser_name: str):
     return driver
 
 def has_needed_cookies(driver: WebDriver):
+    """
+        Callback function to check if important cookies exists in a webdriver
+    """
+
     kosogha = driver.get_cookie("kosogha")
     ci_session = driver.get_cookie("ci_session")
     cookie = driver.get_cookie("cookie")
@@ -39,15 +48,27 @@ def has_needed_cookies(driver: WebDriver):
     return kosogha and ci_session and cookie
 
 def attach_cookies_into_browser(cookies: dict, driver: WebDriver):
+    """
+        Attach cookies into web browser
+    """
+
     for cookie in cookies:
         driver.add_cookie(cookie)
 
 def recaptcha_ok(driver: WebDriver) -> bool:
+    """
+        Check if recaptcha is checked
+    """
+
     recaptcha_anchor = driver.find_element_by_id("recaptcha-anchor")
     aria_checked_attrib = recaptcha_anchor.get_attribute("aria-checked")
-    return False if "false" in aria_checked_attrib else True
+    return "false" not in aria_checked_attrib
 
 def try_signin(driver: WebDriver, email: str, password: str) -> bool:
+    """
+        Attempts to sign in into siakad
+    """
+
     recaptcha_xpath = "//iframe[@title='reCAPTCHA']"
     recaptcha_frame = driver.find_element_by_xpath(recaptcha_xpath)
     recaptcha_wait_amount = 999
@@ -78,6 +99,10 @@ def try_signin(driver: WebDriver, email: str, password: str) -> bool:
     return True
 
 def start():
+    """
+        Start attendance fill
+    """
+
     if configure.is_first_run():
         configure.run()
 
@@ -86,7 +111,8 @@ def start():
     preferred_webbrowser_name = config.get("browser")
 
     if preferred_webbrowser_name is None:
-        log_neko.message_warn("Preferred web browser is not set in config.json, defaulting to firefox (geckodriver)")
+        log_neko.message_warn("Preferred web browser is not set in config.json,"
+                              " defaulting to firefox (geckodriver)")
         preferred_webbrowser_name = "firefox"
 
     log_neko.message_info(f"Preferred web browser identified as {preferred_webbrowser_name}")
