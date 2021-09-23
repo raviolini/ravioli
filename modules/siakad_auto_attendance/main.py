@@ -13,7 +13,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
-from . import log_neko
+import log_neko
 from . import utils
 from . import configure
 
@@ -22,8 +22,11 @@ def get_webdriver(browser_name: str):
     """
         Instantiate respective webdriver specified in browser_name
     """
-
+    
+    os.environ['WDM_PRINT_FIRST_LINE'] = 'False' #remove the space from log
     os.environ['WDM_LOG_LEVEL'] = '0' # Silence the webdriver_manager log
+
+    browser_name = browser_name.lower()
 
     if browser_name == "firefox":
         driver = webdriver.Firefox(executable_path=GeckoDriverManager().install())
@@ -111,7 +114,7 @@ def start():
     preferred_webbrowser_name = config.get("browser")
 
     if preferred_webbrowser_name is None:
-        log_neko.message_warn("Preferred web browser is not set in config.json,"
+        log_neko.message_warn("Preferred web browser is not set in siakad_user_credential.json,"
                               " defaulting to firefox (geckodriver)")
         preferred_webbrowser_name = "firefox"
 
@@ -148,7 +151,7 @@ def start():
         password = config.get("password")
 
         if not email or not password:
-            log_neko.message_warn("Password and email isn't set in config.json. Aborting")
+            log_neko.message_warn("Password and email isn't set in siakad_user_credential.json. Aborting")
             return False
 
         log_neko.message_info("Please fill in the captcha box")

@@ -4,7 +4,7 @@
 
 import sys
 
-from . import log_neko
+import log_neko
 from . import utils
 
 def is_first_run():
