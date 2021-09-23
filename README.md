@@ -1,28 +1,25 @@
 # Ravioli
-My i3wm startup script made with python.
+A startup script and an automation service made with Python.
 
-Current startup "modules":
+Current automation modules:
 - auto-presence-fill: `auto-absen.py`
 
-## Installing
-Install required modules:
+## How To Use
+Install dependencies:
 ```sh
 $ pip install -r requirements.txt
 ```
-Download firefox and geckodriver
-
-## How to use
-### Write your account details
-Make a `config.json`
-```json
-{"email": "<email>", "password": "<password>"}
+Run `setup.py` to configure the web browser and account details:
+```sh
+$ python3 setup.py
 ```
-### Run ravioli.py
+Run ravioli:
+```sh
+$ python3 ravioli.py
 ```
-$ python ravioli.py
+You may want to use python venv before installing the dependencies (optional):
+```sh
+# This assumes ravioli is the directory where ravioli.py is stored
+$ cd ravioli
+$ python3 -m venv .
 ```
-
-## Roadmap
-- [x] Semi-automatic login
-- [x] Cookie persistence
-- [ ] Cross-webdriver support
