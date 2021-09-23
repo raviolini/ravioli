@@ -3,7 +3,6 @@
 from modules import siakad_auto_attendance
 from siakad_auto_attendance import main
 from art import tprint
-from os import system
 
 def yn_choice(message, default='y'):
     choices = 'Y/n' if default.lower() in ('y', 'yes') else 'y/N'
