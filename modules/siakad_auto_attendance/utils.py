@@ -6,7 +6,7 @@ import json
 import pickle
 import os
 
-CONFIG_FILENAME = "config.json"
+CONFIG_FILENAME = "siakad_user_credential.json"
 COOKIES_FILENAME = "cookies.pkl"
 ENCODING = "utf-8"
 

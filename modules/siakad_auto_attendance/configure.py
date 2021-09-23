@@ -18,7 +18,7 @@ def is_first_run():
 
 def configure():
     """
-        Configure config.json interactively.
+        Configure siakad_user_credential.json interactively.
     """
 
     email = str(input("Email: "))
