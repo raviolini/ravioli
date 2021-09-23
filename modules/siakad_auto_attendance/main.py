@@ -67,7 +67,7 @@ def try_signin(driver: WebDriver, email: str, password: str) -> bool:
     if recaptcha_status is True:
         log_neko.message_info("ReCAPTCHA is identified as checked, signing in...")
     else:
-        log_neko.message_W("Failed to login, please check out the presence form yourself")
+        log_neko.message_warn("Failed to login, please check out the presence form yourself")
         driver.switch_to.parent_frame()
         return False
 
