@@ -1,22 +1,46 @@
+"""
+    Logging and message printing utility
+"""
+
 from colorama import Fore
 
-def message_info(message, second_arg = " "):
-    Message = Fore.GREEN + "[INFO] : {_message} {_second_arg}".format(_message=message, _second_arg=second_arg)
-    print(Message)
+def message_info(info: str, second_arg = ""):
+    """
+        Print informaton level message
+    """
 
-def message_warn(message, second_arg = " "):
-    Message = Fore.YELLOW + "[WARNING] : {_message} {_second_arg}".format(_message=message, _second_arg=second_arg)
-    print(Message)
+    message = Fore.GREEN + f"[INFO] : {info} {second_arg}"
+    print(message)
 
-def compose_info(message, second_arg = " "):
-    Message = Fore.GREEN + "[INFO] : {_message} {_second_arg}".format(_message=message, _second_arg=second_arg)
-    return Message
+def message_warn(warning: str, second_arg = ""):
+    """
+        Print warning level message
+    """
+
+    message = Fore.YELLOW + f"[WARNING] : {warning} {second_arg}"
+    print(message)
+
+def compose_info(message, second_arg = ""):
+    """
+        Compose information level message
+    """
+
+    message = Fore.GREEN + f"[INFO] : {message} {second_arg}"
+    return message
 
 def compose_warn(message, second_arg = " "):
-    Message = Fore.YELLOW + "[WARNING] : {_message} {_second_arg}".format(_message=message, _second_arg=second_arg)
-    return Message
+    """
+        Compose warning level message
+    """
+
+    message = Fore.YELLOW + f"[WARNING] : {message} {second_arg}"
+    return message
 
 def test():
+    """
+        Helper function to display how logging looks like
+    """
+
     message_info("testing the message function")
     message_warn("testing the W function")
 

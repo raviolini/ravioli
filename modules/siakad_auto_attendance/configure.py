@@ -1,26 +1,25 @@
+"""
+    Script to configure siakad_auto_attendance
+"""
+
+import sys
+
 from . import log_neko
 from . import utils
 
-from selenium import webdriver
-from pathlib import Path
-from halo import Halo
-from colorama import Fore
-
-import json
-import os
-
 def is_first_run():
-    # Considered first run if config is empty or it does not exist
+    """
+        Checks if it's the first time running configure.py. It's considered to
+        be the first run if config is empty or it does not exist.
+    """
+
     config = utils.load_config()
     return not config
 
-def run():
-    if not first_run():
-        log_neko.message_warn("This is not your first run, are you sure to reconfigure?")
-        try:
-            input("Press enter to continue or Ctrl+C to quit ")
-        except KeyboardInterrupt:
-            exit(log_neko.message_info("Quit"))
+def configure():
+    """
+        Configure config.json interactively.
+    """
 
     email = str(input("Email: "))
     password = str(input("Password: "))
@@ -32,7 +31,21 @@ def run():
     config["password"] = password
     config["browser"] = browser
 
-    save_to_config(config)
+    utils.save_to_config(config)
+
+def run():
+    """
+        Run configure with first time check.
+    """
+
+    if not is_first_run():
+        log_neko.message_warn("This is not your first run, are you sure to reconfigure?")
+        try:
+            input("Press enter to continue or Ctrl+C to quit ")
+        except KeyboardInterrupt:
+            sys.exit(log_neko.message_info("Quit"))
+
+    configure()
 
 if __name__ == '__main__':
     run()
