@@ -166,6 +166,9 @@ def start():
         return False
 
     WebDriverWait(driver, 60).until(has_needed_cookies, "Needed cookies can't be found")
+
+    driver.get("https://siswa.smktelkom-mlg.sch.id/presnow")
+
     with open("cookies.pkl", "wb") as cookie_storage:
         pickle.dump(driver.get_cookies(), cookie_storage)
 
