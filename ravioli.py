@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 
-from modules import siakad_auto_attendance
-from siakad_auto_attendance import main
 from art import tprint
+
+import pasta.siakad_auto_attendance.main
 
 def yn_choice(message, default='y'):
     choices = 'Y/n' if default.lower() in ('y', 'yes') else 'y/N'
@@ -19,4 +19,4 @@ def ask_auto_absen():
 if __name__ == '__main__':
     say_welcome()
     if ask_auto_absen():
-        siakad_auto_attendance.main.start()
+        pasta.siakad_auto_attendance.main.start()
