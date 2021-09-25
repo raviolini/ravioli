@@ -44,6 +44,7 @@ def run():
             input("Press enter to continue or Ctrl+C to quit ")
         except KeyboardInterrupt:
             sys.exit(log_neko.message_info("Quit"))
+            
 
     configure()
 
