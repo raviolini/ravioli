@@ -113,7 +113,7 @@ def start():
 
     preferred_webbrowser_name = config.get("browser")
 
-    if preferred_webbrowser_name is None:
+    if preferred_webbrowser_name is None or "" or "default" or "Default":
         log_neko.message_warn("Preferred web browser is not set in siakad_user_credential.json,"
                               " defaulting to firefox (geckodriver)")
         preferred_webbrowser_name = "firefox"
