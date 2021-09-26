@@ -20,10 +20,18 @@ def configure():
     """
         Configure siakad_user_credential.json interactively.
     """
-
+    
     email = str(input("Email: "))
     password = str(input("Password: "))
     browser = str(input("Browser: "))
+
+    if browser == "":
+        answer = str(input(log_neko.compose_warn("are you sure not set your preferred browser ? (y/N)")))
+        if answer.lower() == "n":
+            _browser = str(input("Browser: "))
+            browser = _browser
+        else:
+            pass
 
     config = utils.load_config()
 
