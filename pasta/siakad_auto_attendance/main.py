@@ -105,7 +105,7 @@ def start():
     """
         Start attendance fill
     """
-
+    available_browser = ["firefox", "chrome", "edge"]
     if configure.is_first_run():
         configure.run()
 
@@ -113,7 +113,7 @@ def start():
 
     preferred_webbrowser_name = config.get("browser")
 
-    if preferred_webbrowser_name is None or preferred_webbrowser_name.lower() == "default":
+    if preferred_webbrowser_name.lower() not in available_browser or None:
         log_neko.message_warn("Preferred web browser is not set in siakad_user_credential.json,"
                               " defaulting to firefox (geckodriver)")
         preferred_webbrowser_name = "firefox"
