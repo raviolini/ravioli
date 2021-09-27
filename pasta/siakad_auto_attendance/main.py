@@ -16,13 +16,14 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 import log_neko
 from . import utils
 from . import configure
+from . import core
 
 
 def get_webdriver(browser_name: str):
     """
         Instantiate respective webdriver specified in browser_name
     """
-    
+
     os.environ['WDM_PRINT_FIRST_LINE'] = 'False' #remove the space from log
     os.environ['WDM_LOG_LEVEL'] = '0' # Silence the webdriver_manager log
 
@@ -113,7 +114,7 @@ def start():
 
     preferred_webbrowser_name = config.get("browser")
 
-    if preferred_webbrowser_name.lower() not in available_browser or None:
+    if preferred_webbrowser_name.lower() not in available_browser:
         log_neko.message_warn("Preferred web browser is not set in siakad_user_credential.json,"
                               " defaulting to firefox (geckodriver)")
         preferred_webbrowser_name = "firefox"
@@ -151,7 +152,10 @@ def start():
         password = config.get("password")
 
         if not email or not password:
-            log_neko.message_warn("Password and email isn't set in siakad_user_credential.json. Aborting")
+            log_neko.message_warn(
+                "Password and email isn't set in siakad_user_credential.json."
+                " Aborting"
+            )
             return False
 
         log_neko.message_info("Please fill in the captcha box")
@@ -165,15 +169,19 @@ def start():
     WebDriverWait(driver, 60).until(has_needed_cookies, "Needed cookies can't be found")
     spinner.succeed("Needed cookies retrieved")
 
-    # TODO(zndf): Check if token really exists
-    spinner.start("Loading attendance page to retrieve token")
-    driver.get("https://siswa.smktelkom-mlg.sch.id/presnow")
-    spinner.succeed("Attendance page loaded")
-
     spinner.start("Storing cookies")
     utils.save_cookies(driver.get_cookies())
     spinner.succeed("Cookies stored")
 
-    log_neko.message_info("Task completed")
+    log_neko.message_info("Attempting to fill the attendance")
+    user_agent = core.get_user_agent(driver)
+    success = core.try_fill_attendance(core.Dalu.DARING, user_agent)
+
+    if not success:
+        log_neko.message_warn("Failed to fill attendance, please check out the form yourself.")
+        log_neko.message_info("Task completed unsuccessfully")
+    else:
+        log_neko.message_info("Action finished successfully, you should've been marked as present.")
+        log_neko.message_info("Task completed successfully")
 
     return True
