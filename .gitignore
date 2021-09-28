@@ -5,3 +5,4 @@ siakad_user_credential.json
 __pycache__
 geckodriver.log
 .vscode
+output
