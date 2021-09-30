@@ -23,3 +23,5 @@ You may want to use python venv before installing the dependencies (optional):
 $ cd ravioli
 $ python3 -m venv .
 ```
+
+### or if you don't want to bother you can download the release <a href = "https://github.com/cowdingus/ravioli/releases/tag/alpha-0.0.1">here</a>
