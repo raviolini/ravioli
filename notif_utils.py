@@ -1,12 +1,12 @@
-from win10toast import ToastNotifier
+import plyer.platforms.win.notification
+from plyer import notification
 
-def create_toaster():
+"""def create_toaster():
     toaster = ToastNotifier()
-    return toaster
+    return toaster """
 
 def show_toaster(message = "this is default message"):
-    toaster = create_toaster()
-    toaster.show_toast("Alarm Reminder",message)
+    notification.notify("Alarm Reminder", message)
 
 if __name__ == "__main__":
     show_toaster("Saatnya absen")
