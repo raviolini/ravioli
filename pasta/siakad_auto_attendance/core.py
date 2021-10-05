@@ -50,10 +50,6 @@ def session_exists():
     """ Checks if session file exists """
     return os.path.exists(SESSION_FILENAME)
 
-def get_user_agent(driver):
-    """ Get user agent from selenium webdriver """
-    return driver.execute_script("return navigator.userAgent")
-
 def set_cookies_to_session(cookies: dict, session: requests.Session):
     """
         Set required cookies to session object in order to fill the attendance
@@ -73,6 +69,9 @@ def set_cookies_to_session(cookies: dict, session: requests.Session):
                 rest = {"HttpOnly": cookie.get("httpOnly")},
                 expires = cookie.get("expiry")
             )
+
+def get_user_agent_from_config() -> str:
+    return utils.load_config().get("user_agent")
 
 def is_present(session: requests.Session):
     """ Checks the user's presence status """

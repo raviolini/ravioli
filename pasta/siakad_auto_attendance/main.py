@@ -41,6 +41,10 @@ def get_webdriver(browser_name: str):
 
     return driver
 
+def get_user_agent(driver):
+    """ Get user agent from selenium webdriver """
+    return driver.execute_script("return navigator.userAgent")
+
 def has_needed_cookies(driver: WebDriver):
     """
         Callback function to check if important cookies exists in a webdriver
@@ -136,13 +140,15 @@ def is_signed_in(driver: WebDriver) -> bool:
     driver.get(previous_url)
     return signed_in
 
-def start():
-    """
-        Start attendance fill
-    """
+def add_user_agent_to_config(user_agent: str):
+    config = utils.load_config()
+
+    config["user_agent"] = user_agent
+
+    utils.save_to_config(config)
+
+def do_sign_in_sequence():
     available_browser = ["firefox", "chrome", "edge"]
-    if configure.is_first_run():
-        configure.run()
 
     config = utils.load_config()
 
@@ -169,6 +175,9 @@ def start():
     spinner.start("Loading 404 page")
     driver.get("https://siswa.smktelkom-mlg.sch.id/does_not_exist")
     spinner.succeed("404 page loaded")
+
+    user_agent = core.get_user_agent(driver)
+    add_user_agent_to_config(user_agent)
 
     driver.delete_all_cookies()
     attach_cookies_into_browser(cookies, driver)
@@ -203,9 +212,21 @@ def start():
     utils.save_cookies(driver.get_cookies())
     spinner.succeed("Cookies stored")
 
+def start():
+    """
+        Start attendance fill
+    """
+
+    if configure.is_first_run():
+        configure.run()
+
+    # TODO(zndf): Check if calling core.is_signed_in here causes any side effects
+    # TODO(zndf): Replace core.is_signed_in with try catch SessionInvalidException
+    if not (core.session_exists() and core.is_signed_in(core.load_session())):
+        do_sign_in_sequence()
+
     log_neko.message_info("Attempting to fill the attendance")
-    user_agent = core.get_user_agent(driver)
-    success = core.try_fill_attendance(core.Dalu.DARING, user_agent)
+    success = core.try_fill_attendance(core.Dalu.DARING, core.get_user_agent_from_config())
 
     if not success:
         log_neko.message_warn("Failed to fill attendance, please check out the form yourself.")
