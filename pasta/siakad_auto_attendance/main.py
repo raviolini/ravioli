@@ -17,6 +17,7 @@ import log_neko
 from . import utils
 from . import configure
 from . import core
+from .core import ENDPOINTS
 
 
 def get_webdriver(browser_name: str):
@@ -68,14 +69,19 @@ def recaptcha_ok(driver: WebDriver) -> bool:
     aria_checked_attrib = recaptcha_anchor.get_attribute("aria-checked")
     return "false" not in aria_checked_attrib
 
+def redirected_into_welcome_page(driver: WebDriver) -> bool:
+    return driver.current_url == ENDPOINTS["welcome_page"]
+
 def try_signin(driver: WebDriver, email: str, password: str) -> bool:
     """
         Attempts to sign in into siakad
     """
+    recaptcha_wait_amount = 999
+    cookie_wait_amount = 60
+    submit_wait_amount = 120
 
     recaptcha_xpath = "//iframe[@title='reCAPTCHA']"
     recaptcha_frame = driver.find_element_by_xpath(recaptcha_xpath)
-    recaptcha_wait_amount = 999
 
     email_input_element = driver.find_element_by_name("email")
     password_input_element = driver.find_element_by_name("password")
@@ -99,8 +105,36 @@ def try_signin(driver: WebDriver, email: str, password: str) -> bool:
     driver.switch_to.parent_frame()
     submit_button_element.click()
 
-    # TODO(zndf): Check if login is successful or not
+    WebDriverWait(driver, submit_wait_amount).until(redirected_into_welcome_page,
+    """
+    Web driver waited too long for it to be redirected into welcome page.
+    This indicate that either your internet is unstable or you have put
+    the wrong user credentials.
+    """)
+
+    # Waits for the page to load session or authentication cookies
+    with Halo(text='Waiting for required cookies to load', spinner='dots') as spinner:
+        WebDriverWait(driver, cookie_wait_amount).until(has_needed_cookies, "Needed cookies can't be found")
+        spinner.succeed("Needed cookies retrieved")
+
     return True
+
+def is_signed_in(driver: WebDriver) -> bool:
+    """
+        Checks if the user is signed in by going to welcome page and 
+        checking if the page has redirected the web browser to the
+        login page.
+
+        NOTE: This method doesn't guarantee it will restore the previous
+        loaded page with the same state as it was before.
+    """
+    previous_url = driver.current_url
+
+    driver.get(ENDPOINTS["welcome_page"])
+    signed_in = "Login" not in driver.title
+
+    driver.get(previous_url)
+    return signed_in
 
 def start():
     """
@@ -164,10 +198,6 @@ def start():
     if not signed_in:
         log_neko.message_warn("Sign in attempt failed. Aborting")
         return False
-
-    spinner.start("Waiting for required cookies to load")
-    WebDriverWait(driver, 60).until(has_needed_cookies, "Needed cookies can't be found")
-    spinner.succeed("Needed cookies retrieved")
 
     spinner.start("Storing cookies")
     utils.save_cookies(driver.get_cookies())
