@@ -3,3 +3,4 @@ requests
 art
 selenium
 webdriver-manager
+plyer
