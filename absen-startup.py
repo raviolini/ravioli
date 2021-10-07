@@ -61,7 +61,7 @@ def main(program_name = "ravioli.exe"):
 
     win32gui.ShowWindow(hide , win32con.SW_SHOW) #reopening the cli
     #ravioli_dummy.main() #change it to your module
-    subprocess.Popen(program, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+    subprocess.Popen(program)
 
 if __name__ == '__main__':
     main()
