@@ -50,7 +50,7 @@ def main(program_name = "ravioli.exe"):
     if you wanna call it from another module, use this main function
     """
     if program_name.endswith(".exe"):
-        program = ".\{}".format(program_name)
+        program = ".\\{}".format(program_name)
     else:
         program = "py {}".format(program_name)
 
