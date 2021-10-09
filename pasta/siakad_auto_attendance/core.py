@@ -6,6 +6,7 @@
 
 from enum import Enum
 import os
+import re
 
 import pickle
 import requests
@@ -49,10 +50,6 @@ def session_exists():
     """ Checks if session file exists """
     return os.path.exists(SESSION_FILENAME)
 
-def get_user_agent(driver):
-    """ Get user agent from selenium webdriver """
-    return driver.execute_script("return navigator.userAgent")
-
 def set_cookies_to_session(cookies: dict, session: requests.Session):
     """
         Set required cookies to session object in order to fill the attendance
@@ -73,10 +70,24 @@ def set_cookies_to_session(cookies: dict, session: requests.Session):
                 expires = cookie.get("expiry")
             )
 
+def get_user_agent_from_config() -> str:
+    return utils.load_config().get("user_agent")
+
 def is_present(session: requests.Session):
     """ Checks the user's presence status """
     response = session.post(ENDPOINTS["presence_status"])
     return "masuk" in response.json()["status_presensi"][0].lower()
+
+def get_page_title(response: requests.Response):
+    """ Gets title of a HTML response """
+    response_text = response.text
+    return re.search('<\W*title\W*(.*)</title', response_text, re.IGNORECASE).group(1)
+
+def is_signed_in(session: requests.Session):
+    """ Checks if the user is already signed in """
+    response = session.get(ENDPOINTS["welcome_page"])
+    page_title = get_page_title(response)
+    return "Login" not in page_title
 
 def post_attendance(session: requests.Session, dalu: Dalu):
     """ Do a post request to fill the attendance """
@@ -126,6 +137,9 @@ def try_fill_attendance(dalu: Dalu, user_agent: str):
         set_cookies_to_session(cookies, session)
     else:
         session = load_session()
+
+    print("Checking if the login session is valid...")
+    print("Signed In:", is_signed_in(session))
 
     print("Attempting to load token...")
     load_presence_page(session)

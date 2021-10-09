@@ -17,6 +17,7 @@ import log_neko
 from . import utils
 from . import configure
 from . import core
+from .core import ENDPOINTS
 
 
 def get_webdriver(browser_name: str):
@@ -39,6 +40,10 @@ def get_webdriver(browser_name: str):
         raise RuntimeError("Web browser isn't recognized or supported")
 
     return driver
+
+def get_user_agent(driver):
+    """ Get user agent from selenium webdriver """
+    return driver.execute_script("return navigator.userAgent")
 
 def has_needed_cookies(driver: WebDriver):
     """
@@ -68,14 +73,19 @@ def recaptcha_ok(driver: WebDriver) -> bool:
     aria_checked_attrib = recaptcha_anchor.get_attribute("aria-checked")
     return "false" not in aria_checked_attrib
 
+def redirected_into_welcome_page(driver: WebDriver) -> bool:
+    return driver.current_url == ENDPOINTS["welcome_page"]
+
 def try_signin(driver: WebDriver, email: str, password: str) -> bool:
     """
         Attempts to sign in into siakad
     """
+    recaptcha_wait_amount = 999
+    cookie_wait_amount = 60
+    submit_wait_amount = 120
 
     recaptcha_xpath = "//iframe[@title='reCAPTCHA']"
     recaptcha_frame = driver.find_element_by_xpath(recaptcha_xpath)
-    recaptcha_wait_amount = 999
 
     email_input_element = driver.find_element_by_name("email")
     password_input_element = driver.find_element_by_name("password")
@@ -99,16 +109,46 @@ def try_signin(driver: WebDriver, email: str, password: str) -> bool:
     driver.switch_to.parent_frame()
     submit_button_element.click()
 
-    # TODO(zndf): Check if login is successful or not
+    WebDriverWait(driver, submit_wait_amount).until(redirected_into_welcome_page,
+    """
+    Web driver waited too long for it to be redirected into welcome page.
+    This indicate that either your internet is unstable or you have put
+    the wrong user credentials.
+    """)
+
+    # Waits for the page to load session or authentication cookies
+    with Halo(text='Waiting for required cookies to load', spinner='dots') as spinner:
+        WebDriverWait(driver, cookie_wait_amount).until(has_needed_cookies, "Needed cookies can't be found")
+        spinner.succeed("Needed cookies retrieved")
+
     return True
 
-def start():
+def is_signed_in(driver: WebDriver) -> bool:
     """
-        Start attendance fill
+        Checks if the user is signed in by going to welcome page and 
+        checking if the page has redirected the web browser to the
+        login page.
+
+        NOTE: This method doesn't guarantee it will restore the previous
+        loaded page with the same state as it was before.
     """
+    previous_url = driver.current_url
+
+    driver.get(ENDPOINTS["welcome_page"])
+    signed_in = "Login" not in driver.title
+
+    driver.get(previous_url)
+    return signed_in
+
+def add_user_agent_to_config(user_agent: str):
+    config = utils.load_config()
+
+    config["user_agent"] = user_agent
+
+    utils.save_to_config(config)
+
+def do_sign_in_sequence():
     available_browser = ["firefox", "chrome", "edge"]
-    if configure.is_first_run():
-        configure.run()
 
     config = utils.load_config()
 
@@ -135,6 +175,9 @@ def start():
     spinner.start("Loading 404 page")
     driver.get("https://siswa.smktelkom-mlg.sch.id/does_not_exist")
     spinner.succeed("404 page loaded")
+
+    user_agent = core.get_user_agent(driver)
+    add_user_agent_to_config(user_agent)
 
     driver.delete_all_cookies()
     attach_cookies_into_browser(cookies, driver)
@@ -165,17 +208,25 @@ def start():
         log_neko.message_warn("Sign in attempt failed. Aborting")
         return False
 
-    spinner.start("Waiting for required cookies to load")
-    WebDriverWait(driver, 60).until(has_needed_cookies, "Needed cookies can't be found")
-    spinner.succeed("Needed cookies retrieved")
-
     spinner.start("Storing cookies")
     utils.save_cookies(driver.get_cookies())
     spinner.succeed("Cookies stored")
 
+def start():
+    """
+        Start attendance fill
+    """
+
+    if configure.is_first_run():
+        configure.run()
+
+    # TODO(zndf): Check if calling core.is_signed_in here causes any side effects
+    # TODO(zndf): Replace core.is_signed_in with try catch SessionInvalidException
+    if not (core.session_exists() and core.is_signed_in(core.load_session())):
+        do_sign_in_sequence()
+
     log_neko.message_info("Attempting to fill the attendance")
-    user_agent = core.get_user_agent(driver)
-    success = core.try_fill_attendance(core.Dalu.DARING, user_agent)
+    success = core.try_fill_attendance(core.Dalu.DARING, core.get_user_agent_from_config())
 
     if not success:
         log_neko.message_warn("Failed to fill attendance, please check out the form yourself.")
@@ -183,5 +234,7 @@ def start():
     else:
         log_neko.message_info("Action finished successfully, you should've been marked as present.")
         log_neko.message_info("Task completed successfully")
+    
+    log_neko.message_warn("Please submit any bugs into our github issues page at https://github.com/cowdingus/ravioli/issues")
 
     return True
