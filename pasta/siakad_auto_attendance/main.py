@@ -235,6 +235,6 @@ def start():
         log_neko.message_info("Action finished successfully, you should've been marked as present.")
         log_neko.message_info("Task completed successfully")
     
-    log_neko.message_warn("Please submit any bugs into our github issues page at https://github.com/cowdingus/ravioli/issues")
+    log_neko.message_info("Please submit any bugs into our github issues page at https://github.com/raviolini/ravioli/issues")
 
     return True
