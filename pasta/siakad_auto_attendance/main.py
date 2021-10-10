@@ -17,8 +17,8 @@ import log_neko
 from . import utils
 from . import configure
 from . import core
+from . import main
 from .core import ENDPOINTS
-
 
 def get_webdriver(browser_name: str):
     """
@@ -176,7 +176,7 @@ def do_sign_in_sequence():
     driver.get("https://siswa.smktelkom-mlg.sch.id/does_not_exist")
     spinner.succeed("404 page loaded")
 
-    user_agent = core.get_user_agent(driver)
+    user_agent = main.get_user_agent(driver)
     add_user_agent_to_config(user_agent)
 
     driver.delete_all_cookies()
