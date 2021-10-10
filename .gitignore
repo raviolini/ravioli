@@ -6,3 +6,4 @@ __pycache__
 geckodriver.log
 .vscode
 output
+/env
