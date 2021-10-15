@@ -4,7 +4,7 @@
 
 import sys
 
-import log_neko
+from flour import log_neko
 from . import utils
 
 def is_first_run():

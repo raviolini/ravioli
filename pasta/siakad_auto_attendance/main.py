@@ -13,7 +13,7 @@ from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
-import log_neko
+from flour import log_neko
 from . import utils
 from . import configure
 from . import core
