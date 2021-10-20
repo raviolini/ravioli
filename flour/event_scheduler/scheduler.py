@@ -57,7 +57,7 @@ class Scheduler:
 
         return subscriber.id
 
-    def publish(self, group, name, arguments):
+    def publish(self, group, name, arguments = []):
         with self._mutex:
             self._event_queue.append(Event(name, group, arguments))
 
