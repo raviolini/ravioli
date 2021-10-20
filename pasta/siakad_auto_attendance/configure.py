@@ -2,9 +2,8 @@
     Script to configure siakad_auto_attendance
 """
 
-import sys
-
 from flour import log_neko
+from pasta.siakad_auto_attendance.core import AVAILABLE_BROWSER
 from . import utils
 
 def is_first_run():
@@ -16,22 +15,31 @@ def is_first_run():
     config = utils.load_config()
     return not config
 
+def yn_choice(message, default='y'):
+    choices = 'Y/n' if default.lower() in ('y', 'yes') else 'y/N'
+    choice = input("%s (%s) " % (message, choices))
+    values = ('y', 'yes', '') if choices == 'Y/n' else ('y', 'yes')
+    return choice.strip().lower() in values
+
 def configure():
     """
         Configure siakad_user_credential.json interactively.
     """
-    
-    email = str(input("Email: "))
-    password = str(input("Password: "))
-    browser = str(input("Browser: "))
+
+    email = input("Email: ")
+    password = input("Password: ")
+
+    print("Currently supported browser: ")
+    for browser in AVAILABLE_BROWSER:
+        print(" -", browser)
+
+    browser = input("Browser: ")
 
     if browser == "":
-        answer = str(input(log_neko.compose_warn("are you sure not set your preferred browser ? (y/N)")))
-        if answer.lower() == "n":
-            _browser = str(input("Browser: "))
-            browser = _browser
+        if yn_choice(log_neko.compose_warn("Preferred browser is not set. Are you sure?"), 'n'):
+            print("Continuing with firefox")
         else:
-            pass
+            browser = input("Browser: ")
 
     config = utils.load_config()
 
@@ -47,14 +55,8 @@ def run():
     """
 
     if not is_first_run():
-        log_neko.message_warn("This is not your first run, are you sure to reconfigure?")
-        try:
-            input("Press enter to continue or Ctrl+C to quit ")
-        except KeyboardInterrupt:
-            sys.exit(log_neko.message_info("Quit"))
-            
-
-    configure()
+        if yn_choice(log_neko.compose_warn("This is not your first run, are you sure to reconfigure?"), 'n'):
+            configure()
 
 if __name__ == '__main__':
     run()
