@@ -1,5 +1,5 @@
 import logging
-from scheduler import Scheduler, Event
+from .scheduler import Scheduler, Event
 
 from typing import Optional
 from threading import Lock, Condition

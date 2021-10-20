@@ -1,6 +1,6 @@
 import logging
-from scheduler import Scheduler
-from subscriber import get_subscriber, use_subscriber
+from .scheduler import Scheduler
+from .subscriber import get_subscriber, use_subscriber
 
 @use_subscriber
 def scheduler_task(scheduler: Scheduler, **kwargs):
