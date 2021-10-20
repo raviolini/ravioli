@@ -54,3 +54,10 @@ def save_cookies(cookies: dict) -> None:
 
     with open(COOKIES_FILENAME, "wb") as cookie_storage:
         pickle.dump(cookies, cookie_storage)
+
+def add_entry_to_config(name: str, value: str):
+    config = load_config()
+
+    config[name] = value
+
+    save_to_config(config)
