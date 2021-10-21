@@ -57,6 +57,10 @@ def run():
     if not is_first_run():
         if yn_choice(log_neko.compose_warn("This is not your first run, are you sure to reconfigure?"), 'n'):
             configure()
+        else:
+            return
+
+    configure()
 
 if __name__ == '__main__':
     run()
