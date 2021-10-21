@@ -6,6 +6,8 @@ import re
 import requests
 import pickle
 
+from flour import log_neko
+
 from . import utils
 from .globals import ENDPOINTS, Dalu
 
@@ -16,7 +18,23 @@ def try_fill_attendance(dalu: Dalu):
         Browserlessly fill the attendance form for the user
     """
 
-    user_agent = utils.load_config()["user_agent"]
+    config = utils.load_config()
+
+    if "user_agent" not in config:
+        log_neko.message_warn("""Seems like there's no user_agent value in
+        siakad_user_credentials.json. Please sign in again. If the problem
+        still exists, please submit a github issue into our repository.""")
+        return False
+
+    if os.path.exists(SESSION_FILENAME) or os.path.exists(utils.COOKIES_FILENAME):
+        pass
+    else:
+        log_neko.message_warn("""There's no valid user identifier e.g.
+        {COOKIES_FILENAME} or {SESSION_FILENAME} in the current working
+        directory. Please try signing in again.""")
+        return False
+
+    user_agent = config["user_agent"]
 
     if not session_exists():
         cookies = utils.load_cookies()
