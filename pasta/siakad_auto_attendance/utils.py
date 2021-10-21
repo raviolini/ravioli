@@ -5,6 +5,11 @@
 import json
 import pickle
 import os
+import urllib
+#import requests
+import asyncio
+from flour import log_neko
+import sys
 
 CONFIG_FILENAME = "siakad_user_credential.json"
 COOKIES_FILENAME = "cookies.pkl"
@@ -61,3 +66,25 @@ def add_entry_to_config(name: str, value: str):
     config[name] = value
 
     save_to_config(config)
+
+async def checkConnection():
+    while True:
+        try:
+            urllib.request.urlopen("google.com")
+            #if requests.get('https://google.com').ok:
+            log_neko.message_info("\rYou are online")
+            sys.stdout.flush()
+        except TimeoutError:
+            log_neko.message_warn("\rYou are Offline, please connect into internet")
+            sys.stdout.flush()
+        
+
+def isOnline():
+    log_neko.message_warn("Still Under Construction (SETA")
+    looper = asyncio.new_event_loop()
+    asyncio.set_event_loop(looper)
+    try:
+        looper.run_until_complete(checkConnection())
+    finally:
+        looper.run_until_complete(looper.shutdown_asyncgens())
+        looper.close()

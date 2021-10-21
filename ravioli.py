@@ -6,6 +6,7 @@ from art import tprint
 
 from flour import log_neko
 from pasta.siakad_auto_attendance.main import start as saa_start
+from pasta.siakad_auto_attendance.utils import isOnline
 
 from flour.event_scheduler.scheduler import Scheduler as EventScheduler
 from flour.event_scheduler.scheduler_task import scheduler_task
@@ -14,6 +15,7 @@ import ravioli_systray
 
 if __name__ == '__main__':
     tprint("{*} RAVIOLI")
+    isOnline()
 
     log_neko.compose_info("Starting event scheduler");
 
