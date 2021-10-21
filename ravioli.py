@@ -6,6 +6,7 @@ from art import tprint
 
 from flour import log_neko
 from pasta.siakad_auto_attendance.main import start as saa_start
+from pasta.task_scheduler.main import start as ts_start
 
 from flour.event_scheduler.scheduler import Scheduler as EventScheduler
 from flour.event_scheduler.scheduler_task import scheduler_task
@@ -31,12 +32,20 @@ if __name__ == '__main__':
         args=[event_scheduler]
     )
 
+    task_scheduler_thread = Thread(
+        name="TaskSchedulerThread",
+        target=ts_start,
+        args=[event_scheduler]
+    )
+
     event_scheduler_thread.start()
+    task_scheduler_thread.start()
     attendance_form_filler_thread.start()
 
     ravioli_systray.start(event_scheduler)
 
     attendance_form_filler_thread.join()
+    task_scheduler_thread.join()
 
     event_scheduler.publish("flow_control", "terminate_scheduler")
     event_scheduler_thread.join()
