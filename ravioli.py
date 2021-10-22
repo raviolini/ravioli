@@ -16,7 +16,10 @@ import ravioli_systray
 
 if __name__ == '__main__':
     tprint("{*} RAVIOLI")
-    isOnline()
+    try:
+        isOnline()
+    except KeyboardInterrupt:
+        log_neko.message_info("connection checker stoped")
 
     log_neko.compose_info("Starting event scheduler");
 

@@ -70,7 +70,7 @@ def add_entry_to_config(name: str, value: str):
 async def checkConnection():
     while True:
         try:
-            urllib.request.urlopen("google.com")
+            urllib.request.urlopen("https://google.com")
             #if requests.get('https://google.com').ok:
             log_neko.message_info("\rYou are online")
             sys.stdout.flush()
@@ -80,7 +80,7 @@ async def checkConnection():
         
 
 def isOnline():
-    log_neko.message_warn("Still Under Construction (SETA")
+    log_neko.message_warn("Connection checker is still Under Construction (SETA)")
     looper = asyncio.new_event_loop()
     asyncio.set_event_loop(looper)
     try:
