@@ -67,6 +67,7 @@ def add_entry_to_config(name: str, value: str):
 
     save_to_config(config)
 
+###Connection checker is still under construction###
 async def checkConnection():
     while True:
         try:
@@ -88,3 +89,9 @@ def isOnline():
     finally:
         looper.run_until_complete(looper.shutdown_asyncgens())
         looper.close()
+
+def connectionCheck():
+    try:
+        isOnline()
+    except KeyboardInterrupt:
+        log_neko.message_info("connection checker stoped")

@@ -7,7 +7,7 @@ from art import tprint
 from flour import log_neko
 from pasta.siakad_auto_attendance.main import start as saa_start
 from pasta.task_scheduler.main import start as ts_start
-from pasta.siakad_auto_attendance.utils import isOnline
+from pasta.siakad_auto_attendance.utils import connectionCheck as connection_check
 
 from flour.event_scheduler.scheduler import Scheduler as EventScheduler
 from flour.event_scheduler.scheduler_task import scheduler_task
@@ -39,16 +39,18 @@ if __name__ == '__main__':
         args=[event_scheduler]
     )
 
+    #connection_checker_thread = Thread(
+    #    name="ConnectionChecker",
+    #    target=connection_check
+    #)
+
     event_scheduler_thread.start()
     task_scheduler_thread.start()
     attendance_form_filler_thread.start()
-
+    #connection_checker_thread.start()
+    
     ravioli_systray.start(event_scheduler)
 
-    try:
-        isOnline()
-    except KeyboardInterrupt:
-        log_neko.message_info("connection checker stoped")
 
     attendance_form_filler_thread.join()
     task_scheduler_thread.join()
