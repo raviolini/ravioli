@@ -171,3 +171,9 @@ def attach_cookies_into_browser(cookies: dict, driver: WebDriver):
 def get_user_agent_from_browser(driver: WebDriver):
     """ Get user agent from selenium webdriver """
     return driver.execute_script("return navigator.userAgent")
+
+def clean_login_information():
+    if os.path.exists(utils.COOKIES_FILENAME):
+        os.remove(utils.COOKIES_FILENAME)
+    if os.path.exists(utils.CONFIG_FILENAME):
+        os.remove(utils.CONFIG_FILENAME)

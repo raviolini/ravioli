@@ -16,7 +16,6 @@ import ravioli_systray
 
 if __name__ == '__main__':
     tprint("{*} RAVIOLI")
-
     log_neko.compose_info("Starting event scheduler");
 
     event_scheduler = EventScheduler()
@@ -39,23 +38,14 @@ if __name__ == '__main__':
         args=[event_scheduler]
     )
 
-    #connection_checker_thread = Thread(
-    #    name="ConnectionChecker",
-    #    target=connection_check
-    #)
-
     event_scheduler_thread.start()
     task_scheduler_thread.start()
     attendance_form_filler_thread.start()
-    #connection_checker_thread.start()
-    
-    ravioli_systray.start(event_scheduler)
 
+    ravioli_systray.start(event_scheduler)
 
     attendance_form_filler_thread.join()
     task_scheduler_thread.join()
 
     event_scheduler.publish("flow_control", "terminate_scheduler")
     event_scheduler_thread.join()
-
-    

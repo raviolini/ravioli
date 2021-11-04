@@ -14,6 +14,7 @@ def start(scheduler: Scheduler):
         MenuItem("Fill Attendance", lambda: scheduler.publish("siakad_auto_attendance", "fill_attendance")),
         MenuItem("Sign In", lambda: scheduler.publish("siakad_auto_attendance", "sign_in")),
         MenuItem("Configure", lambda: scheduler.publish("siakad_auto_attendance", "configure")),
+        MenuItem("Clean Login Information", lambda: scheduler.publish("siakad_auto_attendance", "clean_login_information")),
         MenuItem("Exit", terminate)
     ))
 

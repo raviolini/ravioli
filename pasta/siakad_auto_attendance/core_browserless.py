@@ -171,4 +171,6 @@ def remove_ci_session_cookie(session: requests.Session):
     """
     session.cookies.set(name = "ci_session", value = None)
 
-
+def clean_login_information():
+    if os.path.exists(SESSION_FILENAME):
+        os.remove(SESSION_FILENAME)

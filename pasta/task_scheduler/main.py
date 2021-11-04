@@ -13,6 +13,8 @@ def start(scheduler, **kwargs):
     subscriber.set_default_scheduler(scheduler)
     subscriber.subscribe_into("flow_control")
 
+    schedule.every().day.at("06:00:03").do(lambda: scheduler.publish("siakad_auto_attendance", "fill_attendance"))
+
     while True:
         task = subscriber.poll_event()
 

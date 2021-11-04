@@ -21,5 +21,7 @@ def start(scheduler, **kwargs):
             tasks.sign_in()
         elif task.name == "configure":
             tasks.configure()
+        elif task.name == "clean_login_information":
+            tasks.clean_login_information()
         elif task.name == "terminate":
             break;
