@@ -13,7 +13,11 @@ def start(scheduler, **kwargs):
     subscriber.set_default_scheduler(scheduler)
     subscriber.subscribe_into("flow_control")
 
-    schedule.every().day.at("06:00:03").do(lambda: scheduler.publish("siakad_auto_attendance", "fill_attendance"))
+    schedule.every().monday.at("06:00:10").do(lambda: scheduler.publish("siakad_auto_attendance", "fill_attendance"))
+    schedule.every().tuesday.at("06:00:10").do(lambda: scheduler.publish("siakad_auto_attendance", "fill_attendance"))
+    schedule.every().wednesday.at("06:00:10").do(lambda: scheduler.publish("siakad_auto_attendance", "fill_attendance"))
+    schedule.every().thursday.at("06:00:10").do(lambda: scheduler.publish("siakad_auto_attendance", "fill_attendance"))
+    schedule.every().friday.at("06:00:10").do(lambda: scheduler.publish("siakad_auto_attendance", "fill_attendance"))
 
     while True:
         task = subscriber.poll_event()

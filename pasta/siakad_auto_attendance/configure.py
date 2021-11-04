@@ -4,7 +4,9 @@
 
 from flour import log_neko
 from pasta.siakad_auto_attendance.core import AVAILABLE_BROWSER
+
 from . import utils
+from .utils import yn_choice
 
 def is_first_run():
     """
@@ -14,12 +16,6 @@ def is_first_run():
 
     config = utils.load_config()
     return not config
-
-def yn_choice(message, default='y'):
-    choices = 'Y/n' if default.lower() in ('y', 'yes') else 'y/N'
-    choice = input("%s (%s) " % (message, choices))
-    values = ('y', 'yes', '') if choices == 'Y/n' else ('y', 'yes')
-    return choice.strip().lower() in values
 
 def configure():
     """

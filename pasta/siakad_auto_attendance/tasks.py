@@ -9,7 +9,7 @@ from . import configure as _configure
 from .core import try_sign_in
 from .core_browserless import try_fill_attendance
 from .globals import Dalu
-from pasta.siakad_auto_attendance import core
+from pasta.siakad_auto_attendance import core, utils
 
 from pasta.siakad_auto_attendance import core_browserless
 
@@ -28,7 +28,14 @@ def sign_in():
 def fill_attendance():
     log_neko.message_info("Attempting to fill the attendance")
 
-    if try_fill_attendance(Dalu.LURING):
+    dalu = Dalu.DARING
+
+    if utils.yn_choice("Are you schooling from home?"):
+        dalu = Dalu.DARING
+    else:
+        dalu = Dalu.LURING
+
+    if try_fill_attendance(dalu):
         log_neko.message_info("Action finished successfully, you should've been marked as present.")
         return True
 
