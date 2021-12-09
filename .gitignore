@@ -7,3 +7,5 @@ geckodriver.log
 .vscode
 output
 /env
+/include
+/trash

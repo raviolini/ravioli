@@ -5,6 +5,11 @@
 import json
 import pickle
 import os
+import urllib
+#import requests
+import asyncio
+from flour import log_neko
+import sys
 
 CONFIG_FILENAME = "siakad_user_credential.json"
 COOKIES_FILENAME = "cookies.pkl"
@@ -54,3 +59,45 @@ def save_cookies(cookies: dict) -> None:
 
     with open(COOKIES_FILENAME, "wb") as cookie_storage:
         pickle.dump(cookies, cookie_storage)
+
+def add_entry_to_config(name: str, value: str):
+    config = load_config()
+
+    config[name] = value
+
+    save_to_config(config)
+
+def yn_choice(message, default='y'):
+    choices = 'Y/n' if default.lower() in ('y', 'yes') else 'y/N'
+    choice = input("%s (%s) " % (message, choices))
+    values = ('y', 'yes', '') if choices == 'Y/n' else ('y', 'yes')
+    return choice.strip().lower() in values
+
+###Connection checker is still under construction###
+async def checkConnection():
+    while True:
+        try:
+            urllib.request.urlopen("https://google.com")
+            #if requests.get('https://google.com').ok:
+            log_neko.message_info("\rYou are online")
+            sys.stdout.flush()
+        except TimeoutError:
+            log_neko.message_warn("\rYou are Offline, please connect into internet")
+            sys.stdout.flush()
+        
+
+def isOnline():
+    log_neko.message_warn("Connection checker is still Under Construction (SETA)")
+    looper = asyncio.new_event_loop()
+    asyncio.set_event_loop(looper)
+    try:
+        looper.run_until_complete(checkConnection())
+    finally:
+        looper.run_until_complete(looper.shutdown_asyncgens())
+        looper.close()
+
+def connectionCheck():
+    try:
+        isOnline()
+    except KeyboardInterrupt:
+        log_neko.message_info("connection checker stoped")

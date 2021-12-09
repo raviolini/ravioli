@@ -1,5 +1,4 @@
 import pickle
-import requests
 
 def load_cookies():
     with open("cookies.pkl", "rb") as cookies_file:
@@ -14,7 +13,7 @@ def print_cookies(cookies):
 def print_cookie_keys(cookies):
     keys = []
     for cookie in cookies:
-        for key, value in cookie.items():
+        for key, _ in cookie.items():
             if key not in keys:
                 keys.append(key)
     print("Keys", ":", keys)
